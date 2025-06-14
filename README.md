@@ -1,5 +1,7 @@
+# Librería Digital 
+
 📝 Descripción
-Librería Digital es un sistema de gestión para librerías desarrollado en Java con Jakarta EE. Permite administrar clientes, productos, ventas y reportes a través de una interfaz web simple.
+Es un sistema de gestión para librerías desarrollado en Java con Jakarta EE. Permite administrar clientes, productos, ventas y reportes a través de una interfaz web simple.
 
 Nota: La aplicación utiliza almacenamiento en memoria, por lo que los datos se reiniciarán cada vez que se detenga el servidor.
 
