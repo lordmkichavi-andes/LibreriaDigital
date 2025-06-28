@@ -85,19 +85,13 @@ http://localhost:8080/LibreriaDigital/
 ## 📸 Capturas de Pantalla
 
 ### 🏠 Página Principal
-![Página Principal](https://via.placeholder.com/800x400/4CAF50/FFFFFF?text=Página+Principal+-+Librería+Digital)
+![Página Principal](https://github.com/lordmkichavi-andes/LibreriaDigital/blob/main/images/principal.png)
 
-### 👥 Gestión de Clientes
-![Gestión Clientes](https://via.placeholder.com/800x400/2196F3/FFFFFF?text=Gestión+de+Clientes)
+### 📂 Gestión de Categorías
+![Gestión Categorías](https://github.com/lordmkichavi-andes/LibreriaDigital/blob/main/images/categorias.png)
 
-### 📚 Gestión de Productos
-![Gestión Productos](https://via.placeholder.com/800x400/FF9800/FFFFFF?text=Gestión+de+Productos)
-
-### 🛒 Proceso de Ventas
-![Proceso Ventas](https://via.placeholder.com/800x400/9C27B0/FFFFFF?text=Proceso+de+Ventas)
-
-### 📊 Reportes
-![Reportes](https://via.placeholder.com/800x400/607D8B/FFFFFF?text=Reportes+y+Estadísticas)
+### 📊 Reportes y Estadísticas
+![Reportes](https://github.com/lordmkichavi-andes/LibreriaDigital/blob/main/images/reportes.png)
 
 ## ⭐ Funcionalidades Principales
 
