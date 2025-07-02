@@ -93,6 +93,25 @@ http://localhost:8080/LibreriaDigital/
 ### 📊 Reportes y Estadísticas
 ![Reportes](https://github.com/lordmkichavi-andes/LibreriaDigital/blob/main/images/reportes.png)
 
+## 📈 Análisis de Calidad con CodeScene
+
+Nuestro proyecto incluye un análisis completo de calidad del código realizado con CodeScene, que proporciona insights valiosos sobre la arquitectura, mantenibilidad y salud del sistema.
+
+### 🔍 [Ver Análisis Completo](./codescene-analysis.md)
+
+El análisis incluye:
+- **🏗️ Hotspots de código** - Áreas que requieren mayor atención
+- **🏥 Salud del sistema** - Métricas de calidad y mantenibilidad  
+- **💻 Análisis de código** - Métricas detalladas de desarrollo
+- **📊 Dashboard** - Vista general con métricas clave
+- **🔄 Simulaciones** - Análisis de riesgos y offboarding
+
+### 🎯 Hallazgos Principales
+- **Áreas críticas identificadas** para refactorización prioritaria
+- **Métricas de complejidad** y acoplamiento entre componentes
+- **Recomendaciones específicas** para mejorar la calidad del código
+- **Análisis de tendencias** de evolución del proyecto
+
 ## ⭐ Funcionalidades Principales
 
 ### 🧑‍💼 Gestión de Clientes
@@ -144,6 +163,14 @@ Para información técnica detallada, consulta los siguientes archivos:
 - **Diagramas de clases** por capa
 - **Estructura de paquetes** detallada
 - **Relaciones entre módulos**
+
+### 📈 [codescene-analysis.md](./codescene-analysis.md)
+- **Análisis completo de calidad** del código con CodeScene
+- **Hotspots y áreas críticas** que requieren atención
+- **Métricas de salud del sistema** y tendencias
+- **Análisis de arquitectura** y dependencias
+- **Simulaciones de offboarding** y gestión de riesgos
+- **Dashboard con métricas clave** del proyecto
 
 ## 🏗️ Estructura del Proyecto
 
