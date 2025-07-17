@@ -29,13 +29,13 @@ public class ClienteServlet extends HttpServlet {
         String action = request.getParameter("action");
         
         if (action == null) {
-            // Listar todos los clientes desde la API
-            List<Cliente> clientes = obtenerClientesDesdeAPI();
+            // Listar todos los clientes
+            List<Cliente> clientes = obtenerClientes();
             mostrarClientes(response, clientes);
         } else if (action.equals("ver")) {
-            // Ver un cliente específico desde la API
+            // Ver un cliente específico
             int id = Integer.parseInt(request.getParameter("id"));
-            Cliente cliente = obtenerClienteDesdeAPI(id);
+            Cliente cliente = obtenerCliente(id);
             if (cliente != null) {
                 mostrarCliente(response, cliente);
             } else {
@@ -54,24 +54,16 @@ public class ClienteServlet extends HttpServlet {
             String email = request.getParameter("email");
             String telefono = request.getParameter("telefono");
             
-            Cliente cliente = crearClienteEnAPI(nombre, email, telefono);
-            if (cliente != null) {
-                response.sendRedirect(request.getContextPath() + "/clientes");
-            } else {
-                response.getWriter().println("<h1>Error al crear el cliente</h1>");
-            }
+            Cliente cliente = crearCliente(nombre, email, telefono);
+            response.sendRedirect(request.getContextPath() + "/clientes");
         } else if (action != null && action.equals("eliminar")) {
             int id = Integer.parseInt(request.getParameter("id"));
-            boolean eliminado = eliminarClienteEnAPI(id);
-            if (eliminado) {
-                response.sendRedirect(request.getContextPath() + "/clientes");
-            } else {
-                response.getWriter().println("<h1>Error al eliminar el cliente</h1>");
-            }
+            boolean eliminado = eliminarCliente(id);
+            response.sendRedirect(request.getContextPath() + "/clientes");
         }
     }
 
-    private List<Cliente> obtenerClientesDesdeAPI() {
+    private List<Cliente> obtenerClientes() {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet(API_BASE_URL + "/clientes");
             String jsonResponse = httpClient.execute(httpGet, response -> 
@@ -85,7 +77,7 @@ public class ClienteServlet extends HttpServlet {
         }
     }
 
-    private Cliente obtenerClienteDesdeAPI(int id) {
+    private Cliente obtenerCliente(int id) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet(API_BASE_URL + "/clientes/" + id);
             String jsonResponse = httpClient.execute(httpGet, response -> 
@@ -99,7 +91,7 @@ public class ClienteServlet extends HttpServlet {
         }
     }
 
-    private Cliente crearClienteEnAPI(String nombre, String email, String telefono) {
+    private Cliente crearCliente(String nombre, String email, String telefono) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(API_BASE_URL + "/clientes");
             
@@ -121,7 +113,7 @@ public class ClienteServlet extends HttpServlet {
         }
     }
 
-    private boolean eliminarClienteEnAPI(int id) {
+    private boolean eliminarCliente(int id) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpDelete httpDelete = new HttpDelete(API_BASE_URL + "/clientes/" + id);
             
@@ -168,7 +160,6 @@ public class ClienteServlet extends HttpServlet {
         response.getWriter().println("Teléfono: <input type='text' name='telefono' required><br>");
         response.getWriter().println("<input type='submit' value='Agregar Cliente'>");
         response.getWriter().println("</form>");
-        response.getWriter().println("<p><small>Los datos se obtienen desde la API REST en /api/clientes</small></p>");
         response.getWriter().println("</body></html>");
     }
 
@@ -207,7 +198,6 @@ public class ClienteServlet extends HttpServlet {
             response.getWriter().println("</table>");
         }
         response.getWriter().println("<a href='clientes'>Volver a la lista</a>");
-        response.getWriter().println("<p><small>Los datos del cliente se obtienen desde la API REST</small></p>");
         response.getWriter().println("</body></html>");
     }
 } 
