@@ -4,6 +4,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.example.model.Cliente;
 import org.example.service.AlmacenamientoService;
 
@@ -12,20 +21,21 @@ import java.util.List;
 
 public class ClienteServlet extends HttpServlet {
     private final AlmacenamientoService almacenamiento = AlmacenamientoService.getInstance();
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final String API_BASE_URL = "http://localhost:8080/libreria-digital/api";
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
         
         if (action == null) {
-            // Listar todos los clientes
-            List<Cliente> clientes = almacenamiento.getClientes();
+            // Listar todos los clientes desde la API
+            List<Cliente> clientes = obtenerClientesDesdeAPI();
             mostrarClientes(response, clientes);
         } else if (action.equals("ver")) {
-            // Ver un cliente específico
+            // Ver un cliente específico desde la API
             int id = Integer.parseInt(request.getParameter("id"));
-            Cliente cliente = almacenamiento.getCliente(id);
+            Cliente cliente = obtenerClienteDesdeAPI(id);
             if (cliente != null) {
                 mostrarCliente(response, cliente);
             } else {
@@ -44,19 +54,91 @@ public class ClienteServlet extends HttpServlet {
             String email = request.getParameter("email");
             String telefono = request.getParameter("telefono");
             
-            Cliente cliente = almacenamiento.agregarCliente(nombre, email, telefono);
-            response.sendRedirect(request.getContextPath() + "/clientes");
+            Cliente cliente = crearClienteEnAPI(nombre, email, telefono);
+            if (cliente != null) {
+                response.sendRedirect(request.getContextPath() + "/clientes");
+            } else {
+                response.getWriter().println("<h1>Error al crear el cliente</h1>");
+            }
         } else if (action != null && action.equals("eliminar")) {
             int id = Integer.parseInt(request.getParameter("id"));
+            boolean eliminado = eliminarClienteEnAPI(id);
+            if (eliminado) {
+                response.sendRedirect(request.getContextPath() + "/clientes");
+            } else {
+                response.getWriter().println("<h1>Error al eliminar el cliente</h1>");
+            }
+        }
+    }
+
+    private List<Cliente> obtenerClientesDesdeAPI() {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet(API_BASE_URL + "/clientes");
+            String jsonResponse = httpClient.execute(httpGet, response -> 
+                EntityUtils.toString(response.getEntity()));
+            
+            return objectMapper.readValue(jsonResponse, new TypeReference<List<Cliente>>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Fallback al almacenamiento local si la API falla
+            return almacenamiento.getClientes();
+        }
+    }
+
+    private Cliente obtenerClienteDesdeAPI(int id) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet(API_BASE_URL + "/clientes/" + id);
+            String jsonResponse = httpClient.execute(httpGet, response -> 
+                EntityUtils.toString(response.getEntity()));
+            
+            return objectMapper.readValue(jsonResponse, Cliente.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Fallback al almacenamiento local si la API falla
+            return almacenamiento.getCliente(id);
+        }
+    }
+
+    private Cliente crearClienteEnAPI(String nombre, String email, String telefono) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(API_BASE_URL + "/clientes");
+            
+            // Crear objeto cliente para enviar
+            Cliente cliente = new Cliente(0, nombre, email, telefono);
+            String jsonCliente = objectMapper.writeValueAsString(cliente);
+            
+            httpPost.setEntity(new StringEntity(jsonCliente, org.apache.hc.core5.http.ContentType.APPLICATION_JSON));
+            httpPost.setHeader("Content-Type", "application/json");
+            
+            String jsonResponse = httpClient.execute(httpPost, response -> 
+                EntityUtils.toString(response.getEntity()));
+            
+            return objectMapper.readValue(jsonResponse, Cliente.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Fallback al almacenamiento local si la API falla
+            return almacenamiento.agregarCliente(nombre, email, telefono);
+        }
+    }
+
+    private boolean eliminarClienteEnAPI(int id) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpDelete httpDelete = new HttpDelete(API_BASE_URL + "/clientes/" + id);
+            
+            return httpClient.execute(httpDelete, response -> 
+                response.getCode() == 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Fallback al almacenamiento local si la API falla
             almacenamiento.eliminarCliente(id);
-            response.sendRedirect(request.getContextPath() + "/clientes");
+            return true;
         }
     }
 
     private void mostrarClientes(HttpServletResponse response, List<Cliente> clientes) throws IOException {
         response.setContentType("text/html;charset=UTF-8");
         response.getWriter().println("<html><body>");
-        response.getWriter().println("<h1>Lista de Clientes</h1>");
+        response.getWriter().println("<h1>Lista de Clientes (desde API REST)</h1>");
         response.getWriter().println("<table border='1'>");
         response.getWriter().println("<tr><th>ID</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Acciones</th></tr>");
         
@@ -86,19 +168,20 @@ public class ClienteServlet extends HttpServlet {
         response.getWriter().println("Teléfono: <input type='text' name='telefono' required><br>");
         response.getWriter().println("<input type='submit' value='Agregar Cliente'>");
         response.getWriter().println("</form>");
+        response.getWriter().println("<p><small>Los datos se obtienen desde la API REST en /api/clientes</small></p>");
         response.getWriter().println("</body></html>");
     }
 
     private void mostrarCliente(HttpServletResponse response, Cliente cliente) throws IOException {
         response.setContentType("text/html;charset=UTF-8");
         response.getWriter().println("<html><body>");
-        response.getWriter().println("<h1>Detalles del Cliente</h1>");
+        response.getWriter().println("<h1>Detalles del Cliente (desde API REST)</h1>");
         response.getWriter().println("<p>ID: " + cliente.getId() + "</p>");
         response.getWriter().println("<p>Nombre: " + cliente.getNombre() + "</p>");
         response.getWriter().println("<p>Email: " + cliente.getEmail() + "</p>");
         response.getWriter().println("<p>Teléfono: " + cliente.getTelefono() + "</p>");
 
-        // Historial de ventas
+        // Historial de ventas (sigue usando el almacenamiento local para esto)
         var ventas = almacenamiento.getVentasPorCliente(cliente.getId());
         response.getWriter().println("<h2>Historial de Compras</h2>");
         if (ventas.isEmpty()) {
@@ -124,6 +207,7 @@ public class ClienteServlet extends HttpServlet {
             response.getWriter().println("</table>");
         }
         response.getWriter().println("<a href='clientes'>Volver a la lista</a>");
+        response.getWriter().println("<p><small>Los datos del cliente se obtienen desde la API REST</small></p>");
         response.getWriter().println("</body></html>");
     }
 } 

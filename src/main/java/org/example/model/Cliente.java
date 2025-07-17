@@ -6,6 +6,10 @@ public class Cliente {
     private String email;
     private String telefono;
 
+    // Constructor vacío requerido por Jackson
+    public Cliente() {
+    }
+
     public Cliente(int id, String nombre, String email, String telefono) {
         this.id = id;
         this.nombre = nombre;

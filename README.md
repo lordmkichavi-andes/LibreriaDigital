@@ -1,4 +1,4 @@
-# 📚 Librería Digital  
+# 📚 Librería Digital 
 
 ## 📝 Descripción
 Es un sistema de gestión para librerías desarrollado en Java con Jakarta EE. Permite administrar clientes, productos, ventas con descuentos dinámicos y reportes a través de una interfaz web simple.

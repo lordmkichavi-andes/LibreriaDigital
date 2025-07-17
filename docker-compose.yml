@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  libreria-digital:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - JETTY_JAVA_OPTIONS=-Xmx512m -Xms256m
+    volumes:
+      - ./logs:/var/lib/jetty/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/libreria-digital/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
