@@ -109,63 +109,6 @@ public class ClienteApi {
         }
     }
     
-    @PUT
-    @Path("/{id}")
-    public Response updateCliente(@PathParam("id") int id, Cliente cliente) {
-        try {
-            // Validaciones
-            if (cliente == null) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Datos del cliente no proporcionados")
-                        .build();
-            }
-            
-            if (!clientes.containsKey(id)) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("Cliente no encontrado con ID: " + id)
-                        .build();
-            }
-            
-            if (cliente.getNombre() == null || cliente.getNombre().trim().isEmpty()) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("El nombre del cliente es obligatorio")
-                        .build();
-            }
-            
-            if (cliente.getEmail() == null || cliente.getEmail().trim().isEmpty()) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("El email del cliente es obligatorio")
-                        .build();
-            }
-            
-            // Verificar si ya existe otro cliente con el mismo email (excluyendo el actual)
-            boolean emailExiste = clientes.values().stream()
-                    .filter(c -> c.getId() != id)
-                    .anyMatch(c -> c.getEmail().equalsIgnoreCase(cliente.getEmail()));
-            if (emailExiste) {
-                return Response.status(Response.Status.CONFLICT)
-                        .entity("Ya existe otro cliente con el email: " + cliente.getEmail())
-                        .build();
-            }
-            
-            Cliente clienteActualizado = new Cliente(id, 
-                cliente.getNombre().trim(), 
-                cliente.getEmail().trim(), 
-                cliente.getTelefono() != null ? cliente.getTelefono().trim() : "");
-            clientes.put(id, clienteActualizado);
-            
-            return Response.ok(clienteActualizado).build();
-        } catch (NumberFormatException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("ID de cliente inválido")
-                    .build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error interno del servidor: " + e.getMessage())
-                    .build();
-        }
-    }
-    
     @DELETE
     @Path("/{id}")
     public Response deleteCliente(@PathParam("id") int id) {
@@ -182,40 +125,6 @@ public class ClienteApi {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("ID de cliente inválido")
                     .build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error interno del servidor: " + e.getMessage())
-                    .build();
-        }
-    }
-    
-    @GET
-    @Path("/search")
-    public Response searchClientes(@QueryParam("nombre") String nombre) {
-        try {
-            if (nombre == null || nombre.trim().isEmpty()) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("El parámetro 'nombre' es obligatorio")
-                        .build();
-            }
-            
-            List<Cliente> resultados = clientes.values().stream()
-                    .filter(cliente -> cliente.getNombre().toLowerCase().contains(nombre.toLowerCase()))
-                    .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-            
-            return Response.ok(resultados).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Error interno del servidor: " + e.getMessage())
-                    .build();
-        }
-    }
-    
-    @GET
-    @Path("/count")
-    public Response getClientesCount() {
-        try {
-            return Response.ok(clientes.size()).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error interno del servidor: " + e.getMessage())
