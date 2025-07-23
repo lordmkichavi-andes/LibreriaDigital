@@ -7,6 +7,10 @@ public class Producto {
     private int stock;
     private Categoria categoria;
 
+    // Constructor vacío requerido por Jackson
+    public Producto() {
+    }
+
     public Producto(int id, String nombre, double precio, int stock, Categoria categoria) {
         this.id = id;
         this.nombre = nombre;

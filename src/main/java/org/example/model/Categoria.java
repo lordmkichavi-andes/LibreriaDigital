@@ -5,6 +5,10 @@ public class Categoria {
     private String nombre;
     private String descripcion;
 
+    // Constructor vacío requerido por Jackson
+    public Categoria() {
+    }
+
     public Categoria(int id, String nombre, String descripcion) {
         this.id = id;
         this.nombre = nombre;
