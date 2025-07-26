@@ -212,6 +212,36 @@ mvn clean
 mvn package
 ```
 
+### **🧪 Pruebas de Performance**
+```bash
+# Ejecutar pruebas de performance comparativas
+./pruebas-post-experimento.sh
+
+# Ver documentación completa en: [pruebas-post-experimento.md](./pruebas-post-experimento.md)
+```
+
+### **🔌 Pruebas de API REST**
+```bash
+# Probar endpoints del API REST
+curl http://libreria-digital-war-env-modernizada.eba-xxguactp.us-east-2.elasticbeanstalk.com/api/clientes
+
+# Crear un cliente
+curl -X POST http://libreria-digital-war-env-modernizada.eba-xxguactp.us-east-2.elasticbeanstalk.com/api/clientes \
+  -H "Content-Type: application/json" \
+  -d '{"nombre":"Juan", "email":"juan@ejemplo.com"}'
+
+# Obtener cliente por ID
+curl http://libreria-digital-war-env-modernizada.eba-xxguactp.us-east-2.elasticbeanstalk.com/api/clientes/1
+
+# Actualizar cliente
+curl -X PUT http://libreria-digital-war-env-modernizada.eba-xxguactp.us-east-2.elasticbeanstalk.com/api/clientes/1 \
+  -H "Content-Type: application/json" \
+  -d '{"nombre":"Juan Actualizado", "email":"juan@ejemplo.com"}'
+
+# Eliminar cliente
+curl -X DELETE http://libreria-digital-war-env-modernizada.eba-xxguactp.us-east-2.elasticbeanstalk.com/api/clientes/1
+```
+
 ### **Despliegue:**
 ```bash
 # Ejecutar en modo desarrollo
