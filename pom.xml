@@ -87,7 +87,7 @@
     </dependencies>
 
     <build>
-        <finalName>ROOT</finalName>
+        <finalName>libreria-digital</finalName>
 
         <plugins>
             <plugin>

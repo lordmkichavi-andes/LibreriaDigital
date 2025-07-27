@@ -23,7 +23,7 @@ import java.util.List;
 public class ProductoServlet extends HttpServlet {
     private final AlmacenamientoService almacenamiento = AlmacenamientoService.getInstance();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final String API_BASE_URL = "http://localhost:8080/libreria-digital/api";
+    private final String API_BASE_URL = "http://localhost:8080/api";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
